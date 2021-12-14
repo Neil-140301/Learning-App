@@ -14,9 +14,11 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { COLORS, SIZES, FONTS, icons, dummyData } from '../../constants';
+import { useNavigation } from '@react-navigation/native';
 
 const Search = () => {
   const scrollViewRef = useRef();
+  const navigation = useNavigation();
 
   const scrollY = useSharedValue(0);
   const onScroll = useAnimatedScrollHandler((e) => {
@@ -84,6 +86,7 @@ const Search = () => {
           contentContainerStyle={{ marginTop: SIZES.radius }}
           renderItem={({ item, index }) => (
             <CategoryCard
+              sharedElementPrefix="Search"
               category={item}
               containerStyle={{
                 height: 130,
@@ -92,6 +95,12 @@ const Search = () => {
                 marginLeft:
                   (index + 1) % 2 === 0 ? SIZES.radius : SIZES.padding,
               }}
+              onPress={() =>
+                navigation.navigate('CourseListing', {
+                  category: item,
+                  sharedElementPrefix: 'Search',
+                })
+              }
             />
           )}
         />

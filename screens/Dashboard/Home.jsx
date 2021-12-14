@@ -16,8 +16,11 @@ import CourseCard from '../../components/CourseCard';
 import Line from '../../components/Line';
 import CategoryCard from '../../components/CategoryCard';
 import HorizontalCourseCard from '../../components/HorizontalCourseCard';
+import { useNavigation } from '@react-navigation/native';
 
 const Home = () => {
+  const navigation = useNavigation();
+
   const renderHeader = useCallback(() => {
     return (
       <View
@@ -160,12 +163,19 @@ const Home = () => {
           contentContainerStyle={{ marginTop: SIZES.radius }}
           renderItem={({ item, index }) => (
             <CategoryCard
+              sharedElementPrefix="Home"
               category={item}
               containerStyle={{
                 marginLeft: index === 0 ? SIZES.padding : SIZES.base,
                 marginRight:
                   index === dummyData.categories.length - 1 ? SIZES.padding : 0,
               }}
+              onPress={() =>
+                navigation.navigate('CourseListing', {
+                  category: item,
+                  sharedElementPrefix: 'Home',
+                })
+              }
             />
           )}
         />

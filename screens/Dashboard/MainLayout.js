@@ -12,6 +12,7 @@ import Home from './Home';
 import Search from './Search';
 import Profile from './Profile';
 import { Shadow } from 'react-native-shadow-2';
+import { useSelector } from 'react-redux';
 
 const bottom_tabs = constants.bottom_tabs.map((i) => {
   return {
@@ -23,6 +24,7 @@ const bottom_tabs = constants.bottom_tabs.map((i) => {
 const MainLayout = () => {
   const flatListRef = useRef();
   const scrollX = useRef(new Animated.Value(0)).current;
+  const appTheme = useSelector((state) => state.theme.appTheme);
 
   const handleTabPress = useCallback(
     (tabIndex) => {
@@ -162,9 +164,10 @@ const MainLayout = () => {
     return (
       <View
         style={{
-          marginBottom: 20,
+          paddingBottom: SIZES.height > 800 ? 20 : 5,
           paddingHorizontal: SIZES.padding,
           paddingVertical: SIZES.radius,
+          backgroundColor: appTheme?.backgroundColor1,
         }}
       >
         <Shadow size={[SIZES.width - SIZES.padding * 2, 85]}>
@@ -172,7 +175,7 @@ const MainLayout = () => {
             style={{
               flex: 1,
               borderRadius: SIZES.radius,
-              backgroundColor: COLORS.primary3,
+              backgroundColor: appTheme?.backgroundColor2,
             }}
           >
             <Tabs scrollX={scrollX} />
@@ -180,7 +183,7 @@ const MainLayout = () => {
         </Shadow>
       </View>
     );
-  }, [SIZES, scrollX, COLORS]);
+  }, [SIZES, scrollX, COLORS, appTheme]);
 
   return (
     <View
@@ -196,6 +199,17 @@ const MainLayout = () => {
       {renderBottomTab()}
     </View>
   );
+};
+
+const mapStateToProps = (state) => {
+  return {
+    appTheme: state.appTheme,
+    error: state.error,
+  };
+};
+
+export const mapDispatchToProps = (dispatch) => {
+  return {};
 };
 
 export default MainLayout;

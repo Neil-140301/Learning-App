@@ -1,11 +1,38 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { MainLayout } from './screens';
+import { MainLayout, CourseListing } from './screens';
 import { useFonts } from '@use-expo/font';
 import AppLoading from 'expo-app-loading';
 
-const Stack = createNativeStackNavigator();
+// import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
+// import thunk from 'redux-thunk';
+import themeReducer from './redux/themeReducer';
+// const store = createStore(themeReducer, applyMiddleware(thunk));
+
+import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
+import { Easing } from 'react-native';
+
+const Stack = createSharedElementStackNavigator();
+const options = {
+  gestureEnabled: false,
+  transitionSpec: {
+    open: {
+      animation: 'timing',
+      config: { duration: 400, easing: Easing.inOut(Easing.ease) },
+    },
+    close: {
+      animation: 'timing',
+      config: { duration: 400, easing: Easing.inOut(Easing.ease) },
+    },
+  },
+  cardStyleInterpolator: ({ current: { progress } }) => {
+    return {
+      cardStyle: { opacity: progress },
+    };
+  },
+};
 
 export default function App() {
   const [isLoaded] = useFonts({
@@ -17,17 +44,26 @@ export default function App() {
   if (!isLoaded) {
     return <AppLoading />;
   }
-  
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-        initialRouteName={'Dashboard'}
-      >
-        <Stack.Screen name="Dashboard" component={MainLayout} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            useNativeDriver: true,
+            headerShown: false,
+          }}
+          initialRouteName={'Dashboard'}
+          detachInactiveScreens={false}
+        >
+          <Stack.Screen name="Dashboard" component={MainLayout} />
+          <Stack.Screen
+            name="CourseListing"
+            component={CourseListing}
+            options={() => options}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }

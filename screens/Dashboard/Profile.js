@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -13,15 +13,38 @@ import TextButton from '../../components/TextButton';
 import ProfileValue from '../../components/ProfileValue';
 import Line from '../../components/Line';
 
-import { COLORS, SIZES, FONTS, icons, images } from '../../constants';
+import {
+  COLORS,
+  SIZES,
+  FONTS,
+  icons,
+  images,
+  darkTheme,
+  lightTheme,
+} from '../../constants';
 import ProgressBar from '../../components/ProgressBar';
 import ProfileRadioBtn from '../../components/ProfileRadioBtn';
+
+// import { connect } from 'react-redux';
+import { toggleTheme } from '../../redux/themeActions';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Profile = () => {
   const [newCourse, setNewCourse] = useState(false);
   const [studyReminder, setStudyReminder] = useState(false);
+  const appTheme = useSelector((state) => state.theme.appTheme);
+  const dispatch = useDispatch();
 
-  const renderHeader = useCallback(() => {
+  //redux
+  const toggleThemeHandler = () => {
+    if (appTheme.name === 'light') {
+      toggleTheme('dark', dispatch);
+    } else {
+      toggleTheme('light', dispatch);
+    }
+  };
+
+  const renderHeader = () => {
     return (
       <View
         style={{
@@ -31,13 +54,17 @@ const Profile = () => {
           justifyContent: 'space-between',
         }}
       >
-        <Text style={{ ...FONTS.h1 }}>Profile</Text>
-        <IconButton icon={icons.sun} iconStyle={{ tintColor: COLORS.black }} />
+        <Text style={{ color: appTheme?.textColor, ...FONTS.h1 }}>Profile</Text>
+        <IconButton
+          icon={icons.sun}
+          iconStyle={{ tintColor: appTheme?.tintColor }}
+          onPress={() => toggleThemeHandler()}
+        />
       </View>
     );
-  }, []);
+  };
 
-  const renderProfileCard = useCallback(() => {
+  const renderProfileCard = () => {
     return (
       <View
         style={{
@@ -46,7 +73,7 @@ const Profile = () => {
           paddingHorizontal: SIZES.radius,
           paddingVertical: 20,
           borderRadius: SIZES.radius,
-          backgroundColor: COLORS.primary3,
+          backgroundColor: appTheme?.backgroundColor2,
         }}
       >
         {/* image */}
@@ -164,18 +191,18 @@ const Profile = () => {
               marginTop: SIZES.padding,
               paddingHorizontal: SIZES.radius,
               borderRadius: 20,
-              backgroundColor: COLORS.white,
+              backgroundColor: appTheme?.backgroundColor4,
             }}
             labelStyle={{
-              color: COLORS.primary,
+              color: appTheme?.textColor2,
             }}
           />
         </View>
       </View>
     );
-  }, []);
+  };
 
-  const renderPS1 = useCallback(() => {
+  const renderPS1 = () => {
     return (
       <View style={styles.profileSectionContainer}>
         <ProfileValue icon={icons.profile} label="Name" value="Lama Dev" />
@@ -195,9 +222,9 @@ const Profile = () => {
         />
       </View>
     );
-  }, []);
+  };
 
-  const renderPS2 = useCallback(() => {
+  const renderPS2 = () => {
     return (
       <View style={styles.profileSectionContainer}>
         <ProfileValue icon={icons.star_1} value="Pages" />
@@ -217,10 +244,10 @@ const Profile = () => {
         />
       </View>
     );
-  }, [newCourse, studyReminder, setNewCourse, setStudyReminder]);
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <View style={{ flex: 1, backgroundColor: appTheme?.backgroundColor1 }}>
       {renderHeader()}
 
       {/* content */}
@@ -243,6 +270,22 @@ const Profile = () => {
   );
 };
 
+// const mapStateToProps = (state) => {
+//   return {
+//     appTheme: state.appTheme,
+//     error: state.error,
+//   };
+// };
+
+// export const mapDispatchToProps = (dispatch) => {
+//   return {
+//     toggleTheme: (themeType) => {
+//       return dispatch(toggleTheme(themeType));
+//     },
+//   };
+// };
+
+// export default connect(mapStateToProps, mapDispatchToProps)(Profile);
 export default Profile;
 
 const styles = StyleSheet.create({
